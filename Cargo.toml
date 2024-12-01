@@ -1,0 +1,5 @@
+[workspace]
+members = ["solutions/*", "runner", "libadvent"]
+
+[workspace.dependencies]
+libadvent = { path = "libadvent" }
