@@ -17,11 +17,7 @@ fn ok(report: &[i32]) -> bool {
 }
 
 fn ok_skipping(report: &Vec<i32>) -> bool {
-    // haaaax
-    if ok(report.as_slice()) {
-        return true;
-    }
-
+    // haaax
     for i in 0..report.len() {
         let report = report
             .iter()
