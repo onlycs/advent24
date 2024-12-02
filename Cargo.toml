@@ -1,5 +1,5 @@
 [workspace]
-members = ["solutions/*", "runner", "libadvent"]
+members = ["solutions", "runner", "libadvent"]
 resolver = "2"
 
 [workspace.dependencies]

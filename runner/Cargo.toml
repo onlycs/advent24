@@ -5,4 +5,4 @@ edition = "2021"
 
 [dependencies]
 libadvent = { workspace = true }
-day01 = { path = "../solutions/day01" }
+solutions = { path = "../solutions" }

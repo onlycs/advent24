@@ -3,14 +3,6 @@
 version = 4
 
 [[package]]
-name = "day01"
-version = "0.1.0"
-dependencies = [
- "itertools",
- "libadvent",
-]
-
-[[package]]
 name = "either"
 version = "1.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -33,6 +25,14 @@ version = "0.1.0"
 name = "runner"
 version = "0.1.0"
 dependencies = [
- "day01",
+ "libadvent",
+ "solutions",
+]
+
+[[package]]
+name = "solutions"
+version = "0.1.0"
+dependencies = [
+ "itertools",
  "libadvent",
 ]

@@ -1,4 +1,5 @@
 use libadvent::Solution;
+use solutions::*;
 
 macro_rules! runner {
     ($($day:ident),*) => {
@@ -51,5 +52,5 @@ macro_rules! runner {
 }
 
 fn main() {
-    runner!(day01);
+    runner!(day01, day02);
 }
