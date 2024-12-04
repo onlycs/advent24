@@ -1,48 +1,42 @@
 use std::collections::HashMap;
 
 use itertools::Itertools;
-use libadvent::{NewlineSeperated, Solution, WhiteSeperated};
+use libadvent::{NewlineSeperated, WhiteSeperated};
 
-pub struct _Solution;
+pub type Input = NewlineSeperated<WhiteSeperated<i32>>;
 
-impl Solution for _Solution {
-    type Input = NewlineSeperated<WhiteSeperated<i32>>;
-    type Output1 = i32;
-    type Output2 = i32;
+pub fn level1(input: Vec<Vec<i32>>) -> i32 {
+    let mut side1 = input.iter().map(|v| v[0]).collect_vec();
+    let mut side2 = input.iter().map(|v| v[1]).collect_vec();
 
-    fn day1(input: Vec<Vec<i32>>) -> i32 {
-        let mut side1 = input.iter().map(|v| v[0]).collect_vec();
-        let mut side2 = input.iter().map(|v| v[1]).collect_vec();
+    side1.sort();
+    side2.sort();
 
-        side1.sort();
-        side2.sort();
-
-        let mut sum = 0;
-        for (a, b) in side1.iter().zip(side2.iter()) {
-            let diff = *a - *b;
-            sum += diff.abs();
-        }
-
-        sum
+    let mut sum = 0;
+    for (a, b) in side1.iter().zip(side2.iter()) {
+        let diff = *a - *b;
+        sum += diff.abs();
     }
 
-    fn day2(input: Vec<Vec<i32>>) -> i32 {
-        let side1 = input.iter().map(|v| v[0]).collect_vec();
-        let side2 = input
-            .iter()
-            .map(|v| v[1])
-            .fold(HashMap::new(), |mut acc, v| {
-                acc.entry(v).and_modify(|e| *e += 1).or_insert(1);
-                acc
-            });
+    sum
+}
 
-        let mut sum = 0;
-        for a in side1.iter() {
-            let appearances = side2.get(a).copied().unwrap_or(0);
-            let similarity = a * appearances;
-            sum += similarity;
-        }
+pub fn level2(input: Vec<Vec<i32>>) -> i32 {
+    let side1 = input.iter().map(|v| v[0]).collect_vec();
+    let side2 = input
+        .iter()
+        .map(|v| v[1])
+        .fold(HashMap::new(), |mut acc, v| {
+            acc.entry(v).and_modify(|e| *e += 1).or_insert(1);
+            acc
+        });
 
-        sum
+    let mut sum = 0;
+    for a in side1.iter() {
+        let appearances = side2.get(a).copied().unwrap_or(0);
+        let similarity = a * appearances;
+        sum += similarity;
     }
+
+    sum
 }

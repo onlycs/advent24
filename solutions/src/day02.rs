@@ -1,7 +1,5 @@
 use itertools::Itertools;
-use libadvent::{NewlineSeperated, Solution, WhiteSeperated};
-
-pub struct _Solution;
+use libadvent::{NewlineSeperated, WhiteSeperated};
 
 fn abs_ok(abs: i32) -> bool {
     abs >= 1 && abs <= 3
@@ -33,16 +31,12 @@ fn ok_skipping(report: &Vec<i32>) -> bool {
     return false;
 }
 
-impl Solution for _Solution {
-    type Input = NewlineSeperated<WhiteSeperated<i32>>;
-    type Output1 = usize;
-    type Output2 = usize;
+pub type Input = NewlineSeperated<WhiteSeperated<i32>>;
 
-    fn day1(input: <Self::Input as libadvent::AsInput>::Input) -> Self::Output1 {
-        input.into_iter().filter(|v| ok(v.as_slice())).count()
-    }
+pub fn level1(input: Vec<Vec<i32>>) -> usize {
+    input.into_iter().filter(|v| ok(v.as_slice())).count()
+}
 
-    fn day2(input: <Self::Input as libadvent::AsInput>::Input) -> Self::Output2 {
-        input.into_iter().filter(ok_skipping).count()
-    }
+pub fn level2(input: Vec<Vec<i32>>) -> usize {
+    input.into_iter().filter(ok_skipping).count()
 }

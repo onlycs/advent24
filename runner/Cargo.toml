@@ -5,4 +5,5 @@ edition = "2021"
 
 [dependencies]
 libadvent = { workspace = true }
+paste = "1.0.15"
 solutions = { path = "../solutions" }
