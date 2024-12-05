@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use itertools::Itertools;
 use libadvent::{NewlineSeperated, Single};
 
