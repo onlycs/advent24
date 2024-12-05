@@ -1,8 +1,7 @@
-use std::{fmt::Debug, str::FromStr};
+use std::{fmt::Debug, str::FromStr, usize};
 
 pub trait AsInput {
     type Input;
-
     fn from_str(s: &str) -> Self::Input;
 }
 
@@ -10,6 +9,7 @@ pub struct CommaSeperated<T>(std::marker::PhantomData<T>);
 pub struct WhiteSeperated<T>(std::marker::PhantomData<T>);
 pub struct NewlineSeperated<T>(std::marker::PhantomData<T>);
 pub struct Single<T>(std::marker::PhantomData<T>);
+pub struct CharSeperated<T, const C: char, const N: usize = 1>(std::marker::PhantomData<T>);
 
 impl<T: AsInput> AsInput for CommaSeperated<T> {
     type Input = Vec<T::Input>;
@@ -43,6 +43,14 @@ impl<T: AsInput> AsInput for Single<T> {
             .map(|c| c.to_string())
             .map(|s| T::from_str(&s))
             .collect()
+    }
+}
+
+impl<T: AsInput, const C: char, const N: usize> AsInput for CharSeperated<T, C, N> {
+    type Input = Vec<T::Input>;
+
+    fn from_str(s: &str) -> Self::Input {
+        s.split(&C.to_string().repeat(N)).map(T::from_str).collect()
     }
 }
 
