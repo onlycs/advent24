@@ -1,4 +1,8 @@
-use std::{cmp::Ordering, str::FromStr};
+use std::{
+    cmp::Ordering::{self, Equal, Greater, Less},
+    collections::HashSet,
+    str::FromStr,
+};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct OrderingRule {
@@ -15,6 +19,12 @@ impl FromStr for OrderingRule {
         let rhs = parts.next().unwrap().parse().unwrap();
 
         Ok(Self { lhs, rhs })
+    }
+}
+
+impl Into<(u32, u32)> for OrderingRule {
+    fn into(self) -> (u32, u32) {
+        (self.lhs, self.rhs)
     }
 }
 
@@ -35,31 +45,24 @@ impl FromStr for Update {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Input {
-    rules: Vec<OrderingRule>,
+    rules: HashSet<(u32, u32)>,
     updates: Vec<Update>,
 }
 
 impl Input {
-    fn rules_containing(&self, n: u32) -> Vec<OrderingRule> {
+    fn rules_containing(&self, n: u32) -> Vec<(u32, Ordering)> {
         self.rules
             .iter()
-            .copied()
-            .filter(|r| r.lhs == n || r.rhs == n)
+            .filter(|(a, b)| *a == n || *b == n)
+            .map(|(a, b)| if *a == n { (*b, Greater) } else { (*a, Less) })
             .collect()
     }
 
     fn rules_both(&self, n: u32, m: u32) -> Option<Ordering> {
         self.rules
             .iter()
-            .copied()
-            .find(|r| (r.lhs == n && r.rhs == m) || (r.lhs == m && r.rhs == n))
-            .map(|r| {
-                if r.lhs == n && r.rhs == m {
-                    Ordering::Less
-                } else {
-                    Ordering::Greater
-                }
-            })
+            .find(|ab| **ab == (n, m) || **ab == (m, n))
+            .map(|(a, _)| if *a == n { Less } else { Greater })
     }
 
     fn follows(&self, i: usize) -> bool {
@@ -68,12 +71,21 @@ impl Input {
         for j in 0..up.nums.len() {
             let r = self.rules_containing(up.nums[j]);
 
-            for rule in r {
-                if (rule.lhs == up.nums[j] && up.nums[..j].contains(&rule.rhs))
-                    || (rule.rhs == up.nums[j]
-                        && up.nums[(j + 1).min(up.nums.len() - 1)..].contains(&rule.lhs))
-                {
-                    return false;
+            for (other, side) in r {
+                match side {
+                    Less => {
+                        if up.nums[j + 1..].contains(&other) {
+                            return false;
+                        }
+                    }
+                    Greater => {
+                        if up.nums[..j].contains(&other) {
+                            return false;
+                        }
+                    }
+                    Equal => {
+                        continue;
+                    }
                 }
             }
         }
@@ -109,7 +121,7 @@ impl FromStr for Input {
             .next()
             .unwrap()
             .lines()
-            .map(|l| l.parse().unwrap())
+            .map(|l| l.parse::<OrderingRule>().unwrap().into())
             .collect();
 
         let updates = parts
