@@ -11,3 +11,7 @@ itertools = "0.13.0"
 libadvent = { workspace = true }
 paste = "1.0.15"
 rayon = "1.10.0"
+
+
+[lints.clippy]
+precedence = "allow"

@@ -2,7 +2,7 @@ use itertools::Itertools;
 use libadvent::{NewlineSeperated, WhiteSeperated};
 
 fn abs_ok(abs: i32) -> bool {
-    abs >= 1 && abs <= 3
+    (1..=3).contains(&abs)
 }
 
 fn ok(report: &[i32]) -> bool {
@@ -14,6 +14,7 @@ fn ok(report: &[i32]) -> bool {
         .all(|[a, b]| (b - a > 0) == increasing && abs_ok((a - b).abs()))
 }
 
+#[allow(clippy::ptr_arg)]
 fn ok_skipping(report: &Vec<i32>) -> bool {
     // haaax
     for i in 0..report.len() {
@@ -28,7 +29,7 @@ fn ok_skipping(report: &Vec<i32>) -> bool {
         }
     }
 
-    return false;
+    false
 }
 
 pub type Input = NewlineSeperated<WhiteSeperated<i32>>;

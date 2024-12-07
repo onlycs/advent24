@@ -51,5 +51,5 @@ macro_rules! runner {
 }
 
 fn main() {
-    runner!(day01, day02, day03, day04, day05, day06);
+    runner!(day01, day02, day03, day04, day05, day06, day07);
 }

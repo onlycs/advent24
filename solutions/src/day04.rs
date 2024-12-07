@@ -3,11 +3,7 @@ use libadvent::{NewlineSeperated, Single};
 
 pub type Input = NewlineSeperated<Single<char>>;
 
-fn findxmas(
-    input: &Vec<Vec<char>>,
-    (mut i, mut j): (usize, usize),
-    (offi, offj): (i32, i32),
-) -> bool {
+fn findxmas(input: &[Vec<char>], (mut i, mut j): (usize, usize), (offi, offj): (i32, i32)) -> bool {
     let len = input.len();
 
     let ti = |i| {
@@ -36,11 +32,11 @@ fn findxmas(
         }
 
         let Some(newi) = ti(i) else {
-            return pattern.len() == 0;
+            return pattern.is_empty();
         };
 
         let Some(newj) = tj(j) else {
-            return pattern.len() == 0;
+            return pattern.is_empty();
         };
 
         i = newi;
@@ -50,12 +46,12 @@ fn findxmas(
     true
 }
 
-fn find_mas(input: &Vec<Vec<char>>, (i, j): (usize, usize)) -> bool {
+fn find_mas(input: &[Vec<char>], (i, j): (usize, usize)) -> bool {
     if i == 0 || j == 0 || i == input.len() - 1 || j == input[0].len() - 1 || input[i][j] != 'A' {
         return false;
     }
 
-    let valids = vec!['M', 'S'];
+    let valids = ['M', 'S'];
     let diags = vec![(-1, -1), (1, 1), (-1, 1), (1, -1)]
         .into_iter()
         .map(|(offi, offj)| (i as i32 + offi, j as i32 + offj))

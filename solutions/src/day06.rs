@@ -88,13 +88,6 @@ impl Square {
             _ => false,
         }
     }
-
-    fn is_empty(&self) -> bool {
-        match self {
-            Self::Empty => true,
-            _ => false,
-        }
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -165,71 +158,8 @@ impl Input {
             self.guard = dir.modify(guard);
         }
 
-        if !(1..self.squares.len() - 1).contains(&self.guard.0)
-            || !(1..self.squares[0].len() - 1).contains(&self.guard.1)
-        {
-            false
-        } else {
-            true
-        }
-    }
-
-    fn prune(&mut self) {
-        let start = self.guard;
-        let dir = self[start].as_guard();
-
-        // 0.5 run a simulation
-        self.run();
-
-        let end = self.guard;
-        self[end] = Square::Empty;
-        self[start] = Square::Guard(dir);
-
-        // 1. remove unused obsticles
-        for row in &mut self.squares {
-            for square in row {
-                if let Square::Obstacle(false) = square {
-                    *square = Square::Empty;
-                }
-            }
-        }
-
-        // 2. cut out empty rows
-        let mut remove_rows = vec![];
-        for row in (0..self.squares.len()).rev() {
-            if self.squares[row].iter().all(Square::is_empty) {
-                remove_rows.push(row);
-            }
-        }
-
-        // 3. cut out empty cols
-        let mut remove_cols = vec![];
-        for col in (0..self.squares[0].len()).rev() {
-            if self.squares.iter().all(|row| row[col].is_empty()) {
-                remove_cols.push(col);
-            }
-        }
-
-        for row in &remove_rows {
-            self.squares.remove(*row);
-        }
-
-        for col in &remove_cols {
-            for row in &mut self.squares {
-                row.remove(*col);
-            }
-        }
-
-        // 4. update guard position
-        for row in 0..self.squares.len() {
-            for col in 0..self.squares[0].len() {
-                if let Square::Guard(end_dir) = &mut self[(row, col)] {
-                    *end_dir = dir;
-                    self.guard = (row, col);
-                    return;
-                }
-            }
-        }
+        !(!(1..self.squares.len() - 1).contains(&self.guard.0)
+            || !(1..self.squares[0].len() - 1).contains(&self.guard.1))
     }
 
     fn run(&mut self) {
@@ -295,14 +225,14 @@ impl From<Input> for Bitgame {
 
         let mut cols = vec![u256::ZERO; width];
 
-        for row in 0..rows.len() {
-            for col in 0..cols.len() {
-                let value = match rows[row] & (u256::from(1u128) << col) {
+        for (row, rowmask) in rows.iter().enumerate() {
+            for (col, colmask) in cols.iter_mut().enumerate() {
+                let value = match rowmask & (u256::from(1u128) << col) {
                     u256::ZERO => u256::ZERO,
                     _ => u256::from(1u128),
                 };
 
-                cols[col] |= value << row;
+                *colmask |= value << row;
             }
         }
 
@@ -389,15 +319,7 @@ impl Bitgame {
 
         self.direction.r90_mut();
 
-        if self.guard.0 >= self.rows.len()
-            || self.guard.1 >= self.cols.len()
-            || self.guard.0 == 0
-            || self.guard.1 == 0
-        {
-            false
-        } else {
-            true
-        }
+        !(self.guard.0 >= self.rows.len() || self.guard.1 >= self.cols.len() || self.guard.0 == 0)
     }
 
     fn obstacleloop(&mut self) -> usize {

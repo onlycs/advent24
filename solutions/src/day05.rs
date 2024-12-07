@@ -22,9 +22,9 @@ impl FromStr for OrderingRule {
     }
 }
 
-impl Into<(u32, u32)> for OrderingRule {
-    fn into(self) -> (u32, u32) {
-        (self.lhs, self.rhs)
+impl From<OrderingRule> for (u32, u32) {
+    fn from(other: OrderingRule) -> (u32, u32) {
+        (other.lhs, other.rhs)
     }
 }
 
