@@ -1,5 +1,5 @@
 use core::fmt;
-use std::{ops::Index, path::Display, str::FromStr};
+use std::{ops::Index, str::FromStr};
 
 use itertools::Itertools;
 
@@ -129,8 +129,8 @@ impl Input {
             }
 
             // ia + n = ib, ib + n = io
-            let di = (ib - ia);
-            let dj = (jb - ja);
+            let di = ib - ia;
+            let dj = jb - ja;
 
             while ia + di >= 0
                 && ia + di < self.squares.len() as i32

@@ -1,4 +1,4 @@
-use std::{fmt::Debug, str::FromStr, usize};
+use std::{fmt::Debug, str::FromStr};
 
 pub trait AsInput {
     type Input;

@@ -1,4 +1,4 @@
-use std::{convert, fmt, path::Display, str::FromStr};
+use std::{fmt, str::FromStr};
 
 #[derive(Clone, Debug)]
 pub struct Input {
@@ -97,7 +97,7 @@ pub fn level1(input: Input) -> usize {
     sum
 }
 
-pub fn level2(mut input: Input) -> usize {
+pub fn level2(input: Input) -> usize {
     let mut data = input.data.clone();
 
     let mut j = data.len() - 1;
