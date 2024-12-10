@@ -235,6 +235,8 @@ impl FromStr for Input {
     }
 }
 
+pub type Parser = Input;
+
 pub fn level1(mut input: Input) -> usize {
     input.antinodify_all();
 

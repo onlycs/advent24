@@ -192,6 +192,8 @@ impl fmt::Display for Input {
     }
 }
 
+pub type Parser = Input;
+
 // instead of storing two bytes per square, we can store two bits per square
 #[derive(Clone, Debug, PartialEq)]
 pub struct Bitgame {

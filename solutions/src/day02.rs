@@ -32,7 +32,7 @@ fn ok_skipping(report: &Vec<i32>) -> bool {
     false
 }
 
-pub type Input = NewlineSeperated<WhiteSeperated<i32>>;
+pub type Parser = NewlineSeperated<WhiteSeperated<i32>>;
 
 pub fn level1(input: Vec<Vec<i32>>) -> usize {
     input.into_iter().filter(|v| ok(v.as_slice())).count()

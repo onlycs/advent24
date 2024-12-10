@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use itertools::Itertools;
 use libadvent::{NewlineSeperated, WhiteSeperated};
 
-pub type Input = NewlineSeperated<WhiteSeperated<i32>>;
+pub type Parser = NewlineSeperated<WhiteSeperated<i32>>;
 
 pub fn level1(input: Vec<Vec<i32>>) -> i32 {
     let mut side1 = input.iter().map(|v| v[0]).collect_vec();

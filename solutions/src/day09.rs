@@ -97,6 +97,8 @@ pub fn level1(input: Input) -> usize {
     sum
 }
 
+pub type Parser = Input;
+
 pub fn level2(input: Input) -> usize {
     let mut data = input.data.clone();
 

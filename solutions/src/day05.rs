@@ -135,6 +135,8 @@ impl FromStr for Input {
     }
 }
 
+pub type Parser = Input;
+
 pub fn level1(input: Input) -> u32 {
     let mut sum = 0;
 

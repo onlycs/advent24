@@ -7,7 +7,7 @@ macro_rules! runner {
     (run $day:ident $level:expr) => {
         paste! {
             $day::[<level $level>](
-                $day::Input::from_str(
+                $day::Parser::from_str(
                     include_str!(
                         concat!(
                             env!("CARGO_MANIFEST_DIR"),
@@ -26,22 +26,23 @@ macro_rules! runner {
 
         println!("Pick a day:");
         $(
-            println!("{}) {}", iter.next().unwrap(), concat!(stringify!($day), "a"));
-            println!("{}) {}", iter.next().unwrap(), concat!(stringify!($day), "b"));
+            let i = iter.next().unwrap();
+
+            println!("{}a) {}", i, concat!(stringify!($day), "a"));
+            println!("{}b) {}", i, concat!(stringify!($day), "b"));
         )*
 
         let mut input = String::new();
         std::io::stdin().read_line(&mut input).unwrap();
-        let input = input.trim().parse::<usize>().unwrap();
 
-        let mut iter = 1..;
+        let mut iter = (1..).map(|i| (i + 1) / 2);
 
         match input {
             $(
-                i if i == iter.next().unwrap() => {
+                i if i.trim() == format!("{}a", iter.next().unwrap()) => {
                     println!("{}", runner!(run $day 1));
                 },
-                i if i == iter.next().unwrap() => {
+                i if i.trim() == format!("{}b", iter.next().unwrap()) => {
                     println!("{}", runner!(run $day 2));
                 },
             )*
@@ -51,5 +52,5 @@ macro_rules! runner {
 }
 
 fn main() {
-    runner!(day01, day02, day03, day04, day05, day06, day07, day08, day09);
+    runner!(day01, day02, day03, day04, day05, day06, day07, day08, day09, day10);
 }

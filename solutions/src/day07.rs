@@ -185,6 +185,8 @@ impl<const N: u8> FromStr for Input<N> {
     }
 }
 
+pub type Parser<const N: usize> = Input<N>;
+
 pub fn level1(mut data: Input<2>) -> usize {
     data.problems
         .iter_mut()
