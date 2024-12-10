@@ -1,12 +1,7 @@
-use std::{
-    collections::{HashMap, HashSet},
-    iter,
-    sync::Arc,
-};
+use std::{collections::HashSet, sync::Arc};
 
 use libadvent::{AsInput, NewlineSeperated, Single};
 use rayon::iter::{IntoParallelIterator, ParallelBridge, ParallelIterator};
-use slab_tree::{NodeId, NodeMut, TreeBuilder};
 
 pub type Parser = NewlineSeperated<Single<u8>>;
 type Input = <Parser as AsInput>::Input;
