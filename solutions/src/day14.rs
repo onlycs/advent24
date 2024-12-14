@@ -3,7 +3,6 @@ use libadvent::{
     graph::{Offset, Point},
     AsInput, NewlineSeperated,
 };
-use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 pub const MAX_W: isize = 101;
 pub const MAX_H: isize = 103;
@@ -84,7 +83,7 @@ pub fn level1(data: Input) -> usize {
 }
 
 pub fn level2(mut data: Input) -> usize {
-    let step = |data: &mut Input| data.into_par_iter().for_each(Robot::steponce);
+    let step = |data: &mut Input| data.iter_mut().for_each(Robot::steponce);
     let threshold = 60; // guess'd
 
     for i in 1.. {
