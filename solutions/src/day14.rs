@@ -85,9 +85,9 @@ pub fn level1(data: Input) -> usize {
 
 pub fn level2(mut data: Input) -> usize {
     let step = |data: &mut Input| data.into_par_iter().for_each(Robot::steponce);
-    let threshold = 70; // idfk
+    let threshold = 60; // guess'd
 
-    for i in 0.. {
+    for i in 1.. {
         step(&mut data);
 
         let mut draw = [0u32; 100];
@@ -96,14 +96,13 @@ pub fn level2(mut data: Input) -> usize {
             // basically blur
             let re_y = robot.position.y() / 11;
             let re_x = robot.position.x() / 11;
+            let idx = (re_y * 10 + re_x) as usize;
 
-            draw[(re_y * 10 + re_x) as usize] += 1;
-        }
+            draw[idx] += 1;
 
-        let val = draw.into_par_iter().max().unwrap();
-
-        if val >= threshold {
-            return i + 1;
+            if draw[idx] >= threshold {
+                return i;
+            }
         }
     }
 
