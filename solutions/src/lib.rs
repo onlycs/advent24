@@ -1,4 +1,11 @@
-#![feature(array_windows, let_chains, vec_pop_if, if_let_guard, mem_copy_fn)]
+#![feature(
+    array_windows,
+    let_chains,
+    vec_pop_if,
+    if_let_guard,
+    mem_copy_fn,
+    iter_map_windows
+)]
 
 pub mod day01;
 pub mod day02;
@@ -11,3 +18,5 @@ pub mod day08;
 pub mod day09;
 pub mod day10;
 pub mod day11;
+pub mod day12;
+pub mod day13;

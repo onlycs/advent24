@@ -37,20 +37,24 @@ macro_rules! runner {
 
         let mut iter = (1..).map(|i| (i + 1) / 2);
 
+        let timer = ::std::time::Instant::now();
         match input {
             $(
                 i if i.trim() == format!("{}a", iter.next().unwrap()) => {
-                    println!("{}", runner!(run $day 1));
+                    println!("{} - Level 1: {}", stringify!($day), runner!(run $day 1));
                 },
                 i if i.trim() == format!("{}b", iter.next().unwrap()) => {
-                    println!("{}", runner!(run $day 2));
+                    println!("{} - Level 2: {}", stringify!($day), runner!(run $day 2));
                 },
             )*
             _ => println!("Invalid day"),
         }
+        println!("\ttime: {:?}", timer.elapsed());
     };
 }
 
 fn main() {
-    runner!(day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11);
+    runner!(
+        day01, day02, day03, day04, day05, day06, day07, day08, day09, day10, day11, day12, day13
+    );
 }

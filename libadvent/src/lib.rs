@@ -1,5 +1,7 @@
 use std::{fmt::Debug, str::FromStr};
 
+pub mod graph;
+
 pub trait AsInput {
     type Input;
     fn from_str(s: &str) -> Self::Input;
