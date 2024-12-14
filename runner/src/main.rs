@@ -1,5 +1,8 @@
+use std::time::Duration;
+
 use libadvent::AsInput;
 
+use colored::Colorize;
 use paste::paste;
 use solutions::*;
 
@@ -53,7 +56,8 @@ macro_rules! runner {
                     let output = runner!(run $day 1 parsed);
                     t2run = timer.elapsed();
 
-                    println!("{} - Level 1: {}", stringify!($day), output);
+                    println!("{} - {}", stringify!($day).blue(), "Level 1".magenta());
+                    println!("\t{}:\t{}", "output".cyan(), output);
                 },
                 i if i.trim() == format!("{}b", iter.next().unwrap()) => {
                     let timer = ::std::time::Instant::now();
@@ -64,7 +68,8 @@ macro_rules! runner {
                     let output = runner!(run $day 2 parsed);
                     t2run = timer.elapsed();
 
-                    println!("{} - Level 2: {}", stringify!($day), output);
+                    println!("{} - {}", stringify!($day).blue(), "Level 2".magenta());
+                    println!("\toutput:\t{}", output.to_string().cyan());
                 },
             )*
             _ => {
@@ -73,10 +78,22 @@ macro_rules! runner {
             },
         }
 
-        println!("\tparse: {:?}", t2parse);
-        println!("\trun: {:?}", t2run);
-        println!("\ttotal: {:?}", t2parse + t2run);
+        println!("\tparse:\t{}", colorize(t2parse, 4, 8));
+        println!("\trun:\t{}", colorize(t2run, 75, 200));
+        println!("\ttotal:\t{}", colorize(t2parse + t2run, 80, 210));
     };
+}
+
+fn colorize(time: Duration, a: u64, b: u64) -> String {
+    let disp = format!("{time:?}");
+
+    if time < Duration::from_millis(a) {
+        format!("{}", disp.green())
+    } else if time < Duration::from_millis(b) {
+        format!("{}", disp.yellow())
+    } else {
+        format!("{}", disp.red())
+    }
 }
 
 fn main() {
