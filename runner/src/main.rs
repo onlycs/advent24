@@ -4,21 +4,23 @@ use paste::paste;
 use solutions::*;
 
 macro_rules! runner {
-    (run $day:ident $level:expr) => {
+    (run $day:ident $level:tt $parsed:ident) => {
         paste! {
-            $day::[<level $level>](
-                $day::Parser::from_str(
-                    include_str!(
-                        concat!(
-                            env!("CARGO_MANIFEST_DIR"),
-                            "/../dataset/",
-                            stringify!($day),
-                            ".txt"
-                        )
-                    )
+            $day::[<level $level>]($parsed)
+        }
+    };
+
+    (parse $day:ident) => {
+        $day::Parser::from_str(
+            include_str!(
+                concat!(
+                    env!("CARGO_MANIFEST_DIR"),
+                    "/../dataset/",
+                    stringify!($day),
+                    ".txt"
                 )
             )
-        }
+        )
     };
 
     ($($day:ident),*) => {
@@ -37,19 +39,43 @@ macro_rules! runner {
 
         let mut iter = (1..).map(|i| (i + 1) / 2);
 
-        let timer = ::std::time::Instant::now();
+        let t2parse;
+        let t2run;
+
         match input {
             $(
                 i if i.trim() == format!("{}a", iter.next().unwrap()) => {
-                    println!("{} - Level 1: {}", stringify!($day), runner!(run $day 1));
+                    let timer = ::std::time::Instant::now();
+                    let parsed = runner!(parse $day);
+                    t2parse = timer.elapsed();
+
+                    let timer = ::std::time::Instant::now();
+                    let output = runner!(run $day 1 parsed);
+                    t2run = timer.elapsed();
+
+                    println!("{} - Level 1: {}", stringify!($day), output);
                 },
                 i if i.trim() == format!("{}b", iter.next().unwrap()) => {
-                    println!("{} - Level 2: {}", stringify!($day), runner!(run $day 2));
+                    let timer = ::std::time::Instant::now();
+                    let parsed = runner!(parse $day);
+                    t2parse = timer.elapsed();
+
+                    let timer = ::std::time::Instant::now();
+                    let output = runner!(run $day 2 parsed);
+                    t2run = timer.elapsed();
+
+                    println!("{} - Level 2: {}", stringify!($day), output);
                 },
             )*
-            _ => println!("Invalid day"),
+            _ => {
+                println!("Invalid day");
+                ::std::process::exit(1);
+            },
         }
-        println!("\ttime: {:?}", timer.elapsed());
+
+        println!("\tparse: {:?}", t2parse);
+        println!("\trun: {:?}", t2run);
+        println!("\ttotal: {:?}", t2parse + t2run);
     };
 }
 
