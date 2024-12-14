@@ -14,9 +14,9 @@ pub struct ClawMachine {
 }
 
 impl ClawMachine {
-    fn add_1e18(self) -> Self {
+    fn add_1e13(self) -> Self {
         ClawMachine {
-            r: self.r + Offset(10000000000000, 10000000000000),
+            r: self.r + Offset(1e13 as isize, 1e13 as isize),
             ..self
         }
     }
@@ -118,6 +118,6 @@ pub fn level1(data: Input) -> usize {
 
 pub fn level2(data: Input) -> usize {
     data.into_par_iter()
-        .filter_map(|cm| cm.add_1e18().solve())
+        .filter_map(|cm| cm.add_1e13().solve())
         .sum::<usize>()
 }

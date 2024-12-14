@@ -51,6 +51,9 @@ dependencies = [
 [[package]]
 name = "libadvent"
 version = "0.1.0"
+dependencies = [
+ "itertools",
+]
 
 [[package]]
 name = "paste"
