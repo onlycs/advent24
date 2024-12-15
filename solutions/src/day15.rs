@@ -12,9 +12,6 @@ use libadvent::{
 
 use level1_m::Square as Square1;
 
-pub const WIDTH: usize = 50;
-pub const HEIGHT: usize = 50;
-
 pub struct Parser;
 impl AsInput for Parser {
     type Input = (Grid<Square1>, Point, Vec<Direction>);
