@@ -1,6 +1,8 @@
+#![feature(impl_trait_in_assoc_type)]
+
 use std::{fmt::Debug, str::FromStr};
 
-pub mod graph;
+pub mod grid;
 
 pub trait AsInput {
     type Input;

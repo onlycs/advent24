@@ -1,7 +1,7 @@
 //use ethnum::{Asusize, usize};
 use itertools::Itertools;
 use libadvent::{
-    graph::{Offset, Point},
+    grid::{Offset, Point},
     AsInput, CharSeperated,
 };
 use rayon::iter::{IntoParallelIterator, ParallelIterator};

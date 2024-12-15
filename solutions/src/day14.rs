@@ -1,6 +1,6 @@
 use itertools::Itertools;
 use libadvent::{
-    graph::{Offset, Point},
+    grid::{Offset, Point},
     AsInput, NewlineSeperated,
 };
 
