@@ -1,13 +1,13 @@
 use std::{collections::HashSet, sync::Arc};
 
-use libadvent::{AsInput, NewlineSeperated, Single};
+use libadvent::{Seperated, Take};
 use rayon::iter::{IntoParallelIterator, ParallelBridge, ParallelIterator};
 
-pub type Parser = NewlineSeperated<Single<u8>>;
-type Input = <Parser as AsInput>::Input;
+problem_parser!(Seperated::newline(Take::one(ty_parser!(u8))) => Vec<Vec<u8>>);
+
 type ArcInput = Arc<[Arc<[u8]>]>;
 
-fn arcify(input: Input) -> ArcInput {
+fn arcify(input: Vec<Vec<u8>>) -> ArcInput {
     input.into_iter().map(|v| Arc::from(v.as_slice())).collect()
 }
 
@@ -60,7 +60,7 @@ fn dfs2(a: ArcInput, i: usize, j: usize, n: u8) -> usize {
         .sum::<usize>()
 }
 
-pub fn level1(input: Input) -> usize {
+pub fn level1(input: Vec<Vec<u8>>) -> usize {
     let input = arcify(input);
 
     (0..input.len())
@@ -74,7 +74,7 @@ pub fn level1(input: Input) -> usize {
         .sum::<usize>()
 }
 
-pub fn level2(input: Input) -> usize {
+pub fn level2(input: Vec<Vec<u8>>) -> usize {
     let input = arcify(input);
 
     (0..input.len())

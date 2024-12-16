@@ -64,6 +64,8 @@ impl fmt::Display for Input {
     }
 }
 
+problem_parser!(ty_parser!(Input));
+
 pub fn level1(input: Input) -> usize {
     let mut input = input.process();
     let mut j = 0;
@@ -96,8 +98,6 @@ pub fn level1(input: Input) -> usize {
 
     sum
 }
-
-pub type Parser = Input;
 
 pub fn level2(input: Input) -> usize {
     let mut data = input.data.clone();

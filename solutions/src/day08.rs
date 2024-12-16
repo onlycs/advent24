@@ -235,7 +235,7 @@ impl FromStr for Input {
     }
 }
 
-pub type Parser = Input;
+problem_parser!(ty_parser!(Input));
 
 pub fn level1(mut input: Input) -> usize {
     input.antinodify_all();

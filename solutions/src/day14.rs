@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use libadvent::{
     grid::{Offset, Point},
-    AsInput, NewlineSeperated,
+    IsInput, Seperated,
 };
 
 pub const MAX_W: isize = 101;
@@ -53,10 +53,8 @@ impl Robot {
     }
 }
 
-impl AsInput for Robot {
-    type Input = Self;
-
-    fn from_str(s: &str) -> Self::Input {
+impl IsInput for Robot {
+    fn parse(s: &str) -> Self {
         let lines = s.split(" ").collect_vec();
         let position = Point::parse_xy(&lines[0][2..], ",");
         let velocity = Offset::parse_xy(&lines[1][2..], ",");
@@ -65,8 +63,9 @@ impl AsInput for Robot {
     }
 }
 
-pub type Parser = NewlineSeperated<Robot>;
-type Input = <Parser as AsInput>::Input;
+// pub type Parser = NewlineSeperated<Robot>;
+problem_parser!(Seperated::newline(ty_parser!(Robot)));
+type Input = Vec<Robot>;
 
 pub fn level1(data: Input) -> usize {
     data.into_iter()

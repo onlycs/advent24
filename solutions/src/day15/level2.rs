@@ -132,7 +132,7 @@ impl Input {
     }
 }
 
-pub fn level2(input: <Parser as AsInput>::Input) -> usize {
+pub fn level2(input: <InputParser as Parser>::Input) -> usize {
     let (squares, robot, moves) = input;
 
     let mut input = Input {

@@ -1,3 +1,4 @@
+use libadvent::TyParser;
 use rayon::iter::{ParallelBridge, ParallelIterator};
 
 use std::{num::ParseIntError, str::FromStr};
@@ -185,7 +186,9 @@ impl<const N: u8> FromStr for Input<N> {
     }
 }
 
-pub type Parser<const N: usize> = Input<N>;
+pub fn parser<const N: u8>() -> TyParser<Input<N>> {
+    TyParser::default()
+}
 
 pub fn level1(mut data: Input<2>) -> usize {
     data.problems

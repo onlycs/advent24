@@ -1,7 +1,7 @@
 use itertools::Itertools;
-use libadvent::{NewlineSeperated, Single};
+use libadvent::{Seperated, Take};
 
-pub type Parser = NewlineSeperated<Single<char>>;
+problem_parser!(Seperated::newline(Take::one(ty_parser!(char))) => Vec<Vec<char>>);
 
 fn findxmas(input: &[Vec<char>], (mut i, mut j): (usize, usize), (offi, offj): (i32, i32)) -> bool {
     let len = input.len();

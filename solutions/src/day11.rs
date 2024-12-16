@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
 use itertools::Itertools;
-use libadvent::{AsInput, WhiteSeperated};
+use libadvent::Seperated;
 
-pub type Parser = WhiteSeperated<u64>;
-type Input = <Parser as AsInput>::Input;
+problem_parser!(Seperated::whitespace(ty_parser!(u64)));
+type Input = Vec<u64>;
 
 fn solve(data: Input, steps: usize) -> usize {
     // store each number and the number of times it appears

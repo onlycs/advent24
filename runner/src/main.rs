@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use libadvent::AsInput;
+use libadvent::Parser;
 
 use colored::Colorize;
 use paste::paste;
@@ -14,7 +14,7 @@ macro_rules! runner {
     };
 
     (parse $day:ident) => {
-        $day::Parser::from_str(
+        $day::parser().parse(
             include_str!(
                 concat!(
                     env!("CARGO_MANIFEST_DIR"),

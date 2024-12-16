@@ -4,18 +4,16 @@ use std::{
     sync::Arc,
 };
 
-use libadvent::{AsInput, NewlineSeperated, Single};
+use libadvent::{IsInput, Parser, Seperated, Take};
 
 pub struct Input {
     inner: Vec<Vec<char>>,
 }
 
-impl AsInput for Input {
-    type Input = Self;
-
-    fn from_str(s: &str) -> Self::Input {
+impl IsInput for Input {
+    fn parse(s: &str) -> Self {
         Self {
-            inner: NewlineSeperated::<Single<char>>::from_str(s),
+            inner: Seperated::newline(Take::one(ty_parser!(char))).parse(s),
         }
     }
 }
@@ -248,7 +246,7 @@ impl FloodFill {
     }
 }
 
-pub type Parser = Input;
+problem_parser!(ty_parser!(Input));
 
 pub fn level1(input: Input) -> usize {
     let mut price = 0;

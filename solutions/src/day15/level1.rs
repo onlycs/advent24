@@ -1,7 +1,7 @@
-use super::Parser;
+use super::{InputParser, Parser};
 use libadvent::{
     grid::{Direction, Grid, Point},
-    AsInput,
+    IsInput,
 };
 use std::fmt;
 
@@ -13,10 +13,8 @@ pub enum Square {
     Robot,
 }
 
-impl AsInput for Square {
-    type Input = Self;
-
-    fn from_str(s: &str) -> Self::Input {
+impl IsInput for Square {
+    fn parse(s: &str) -> Self {
         s.chars()
             .map(|c| match c {
                 '.' => Square::Empty,
@@ -108,7 +106,7 @@ impl fmt::Display for Input {
     }
 }
 
-pub fn level1(input: <Parser as AsInput>::Input) -> usize {
+pub fn level1(input: <InputParser as Parser>::Input) -> usize {
     let (squares, robot, moves) = input;
     let mut input = Input {
         squares,

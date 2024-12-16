@@ -1,70 +1,137 @@
-#![feature(impl_trait_in_assoc_type)]
+#![feature(impl_trait_in_assoc_type, pattern)]
 
-use std::{fmt::Debug, str::FromStr};
+use std::{
+    fmt, marker,
+    str::{pattern::Pattern, FromStr},
+};
+
+use itertools::Itertools;
 
 pub mod grid;
 
-pub trait AsInput {
+#[macro_export]
+macro_rules! problem_parser {
+    ($p:expr => $ty:ty) => {
+        pub fn parser() -> impl ::libadvent::Parser<Input = $ty> {
+            $p
+        }
+    };
+
+    (parser $p:tt) => {
+        pub fn parser() -> $p {
+            $p
+        }
+    };
+
+    ($p:expr) => {
+        mod __parser {
+            use super::*;
+            problem_parser!($p => super::Input);
+        }
+
+        pub use __parser::parser;
+    };
+}
+
+#[macro_export]
+macro_rules! ty_parser {
+    ($t:ty) => {
+        ::libadvent::TyParser::<$t>::default()
+    };
+}
+
+pub trait Parser {
     type Input;
-    fn from_str(s: &str) -> Self::Input;
+    fn parse(&mut self, s: &str) -> Self::Input;
 }
 
-pub struct CommaSeperated<T>(std::marker::PhantomData<T>);
-pub struct WhiteSeperated<T>(std::marker::PhantomData<T>);
-pub struct NewlineSeperated<T>(std::marker::PhantomData<T>);
-pub struct Single<T>(std::marker::PhantomData<T>);
-pub struct CharSeperated<T, const C: char, const N: usize = 1>(std::marker::PhantomData<T>);
+pub trait IsInput {
+    fn parse(s: &str) -> Self;
+}
 
-impl<T: AsInput> AsInput for CommaSeperated<T> {
-    type Input = Vec<T::Input>;
+pub struct TyParser<T: IsInput>(marker::PhantomData<T>);
 
-    fn from_str(s: &str) -> Self::Input {
-        s.split(',').map(T::from_str).collect()
+impl<T: IsInput> Parser for TyParser<T> {
+    type Input = T;
+
+    fn parse(&mut self, s: &str) -> Self::Input {
+        T::parse(s)
     }
 }
 
-impl<T: AsInput> AsInput for WhiteSeperated<T> {
-    type Input = Vec<T::Input>;
-
-    fn from_str(s: &str) -> Self::Input {
-        s.split_whitespace().map(T::from_str).collect()
+impl<T: IsInput> Default for TyParser<T> {
+    fn default() -> Self {
+        Self(marker::PhantomData)
     }
 }
 
-impl<T: AsInput> AsInput for NewlineSeperated<T> {
-    type Input = Vec<T::Input>;
-
-    fn from_str(s: &str) -> Self::Input {
-        s.lines().map(T::from_str).collect()
+impl<T: FromStr<Err: fmt::Debug>> IsInput for T {
+    fn parse(s: &str) -> Self {
+        s.parse().expect("Failed to parse")
     }
 }
 
-impl<T: AsInput> AsInput for Single<T> {
+pub struct Seperated<T: Parser, P: Pattern> {
+    seperator: P,
+    inner: T,
+}
+
+impl<T: Parser> Seperated<T, &'static str> {
+    pub const fn new(seperator: &'static str, inner: T) -> Self {
+        Self { seperator, inner }
+    }
+
+    pub const fn comma(inner: T) -> Self {
+        Self::new(",", inner)
+    }
+
+    pub const fn newline(inner: T) -> Self {
+        Self::new("\n", inner)
+    }
+}
+
+impl<T: Parser> Seperated<T, fn(char) -> bool> {
+    pub const fn whitespace(inner: T) -> Self {
+        Self {
+            seperator: char::is_whitespace,
+            inner,
+        }
+    }
+}
+
+impl<T: Parser, P: Pattern + Clone> Parser for Seperated<T, P> {
     type Input = Vec<T::Input>;
 
-    fn from_str(s: &str) -> Self::Input {
-        s.chars()
-            .map(|c| c.to_string())
-            .map(|s| T::from_str(&s))
+    fn parse(&mut self, s: &str) -> Self::Input {
+        s.split(self.seperator.clone())
+            .map(|s| self.inner.parse(s))
             .collect()
     }
 }
 
-impl<T: AsInput, const C: char, const N: usize> AsInput for CharSeperated<T, C, N> {
-    type Input = Vec<T::Input>;
+pub struct Take<T: Parser> {
+    n: usize,
+    inner: T,
+}
 
-    fn from_str(s: &str) -> Self::Input {
-        s.split(&C.to_string().repeat(N)).map(T::from_str).collect()
+impl<T: Parser> Take<T> {
+    pub const fn new(n: usize, inner: T) -> Self {
+        Self { n, inner }
+    }
+
+    pub const fn one(inner: T) -> Self {
+        Self::new(1, inner)
     }
 }
 
-impl<T: FromStr> AsInput for T
-where
-    <T as FromStr>::Err: Debug,
-{
-    type Input = T;
+impl<T: Parser> Parser for Take<T> {
+    type Input = Vec<T::Input>;
 
-    fn from_str(s: &str) -> Self::Input {
-        s.parse().unwrap()
+    fn parse(&mut self, s: &str) -> Self::Input {
+        s.chars()
+            .chunks(self.n)
+            .into_iter()
+            .map(|c| self.inner.parse(&c.collect::<String>()))
+            .collect()
     }
 }

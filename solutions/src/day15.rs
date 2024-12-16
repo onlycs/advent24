@@ -7,20 +7,20 @@ mod level2_m;
 use itertools::Itertools;
 use libadvent::{
     grid::{Direction, Grid, GridParser, Point},
-    AsInput, NewlineSeperated, Single,
+    Parser, Seperated, Take,
 };
 
 use level1_m::Square as Square1;
 
-pub struct Parser;
-impl AsInput for Parser {
+pub struct InputParser;
+impl Parser for InputParser {
     type Input = (Grid<Square1>, Point, Vec<Direction>);
 
-    fn from_str(s: &str) -> Self::Input {
+    fn parse(&mut self, s: &str) -> Self::Input {
         let parts = s.split("\n\n").collect_vec();
 
-        let squares = GridParser::<Square1>::from_str(parts[0]);
-        let moves = NewlineSeperated::<Single<Direction>>::from_str(parts[1]);
+        let squares = GridParser::new(ty_parser!(Square1)).parse(parts[0]);
+        let moves = Seperated::newline(Take::one(ty_parser!(Direction))).parse(parts[1]);
         let moves = moves.into_iter().flatten().rev().collect_vec();
 
         let robot = squares.find(&Square1::Robot);
@@ -28,6 +28,8 @@ impl AsInput for Parser {
         (squares, robot, moves)
     }
 }
+
+problem_parser!(parser InputParser);
 
 pub use level1_m::level1;
 pub use level2_m::level2;

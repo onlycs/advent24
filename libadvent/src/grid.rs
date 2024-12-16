@@ -1,14 +1,12 @@
 // everything is y,x here
+use crate::{IsInput, Parser};
+use itertools::Itertools;
 use std::{
     cmp, fmt,
     iter::{Enumerate, Flatten, Map},
     ops::{Add, AddAssign, Deref, Index, IndexMut, Mul, Neg, Sub, SubAssign},
     ptr,
 };
-
-use itertools::Itertools;
-
-use crate::AsInput;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct Point(pub isize, pub isize);
@@ -207,10 +205,8 @@ impl Deref for Direction {
     }
 }
 
-impl AsInput for Direction {
-    type Input = Self;
-
-    fn from_str(s: &str) -> Self::Input {
+impl IsInput for Direction {
+    fn parse(s: &str) -> Self {
         match s {
             "^" => Self::Up,
             ">" => Self::Right,
@@ -337,20 +333,40 @@ impl<T> IntoIterator for Grid<T> {
     }
 }
 
-pub struct GridParser<T>(std::marker::PhantomData<T>);
+pub struct GridParser<T: Parser, F: FnMut(char, Point)> {
+    inner: T,
+    f: F,
+}
 
-impl<T> AsInput for GridParser<T>
-where
-    T: AsInput,
-{
+impl<T: Parser> GridParser<T, fn(char, Point)> {
+    pub const fn new(inner: T) -> Self {
+        Self {
+            inner,
+            f: |_, _| (),
+        }
+    }
+}
+
+impl<T: Parser, F: FnMut(char, Point)> GridParser<T, F> {
+    pub const fn with_f(inner: T, f: F) -> Self {
+        Self { inner, f }
+    }
+}
+
+impl<T: Parser, F: FnMut(char, Point)> Parser for GridParser<T, F> {
     type Input = Grid<T::Input>;
 
-    fn from_str(s: &str) -> Self::Input {
+    fn parse(&mut self, s: &str) -> Self::Input {
         let inner = s
             .lines()
-            .map(|line| {
+            .enumerate()
+            .map(|(i, line)| {
                 line.chars()
-                    .map(|c| T::from_str(&c.to_string()))
+                    .enumerate()
+                    .map(|(j, c)| {
+                        (self.f)(c, Point(i as isize, j as isize));
+                        self.inner.parse(&c.to_string())
+                    })
                     .collect_vec()
             })
             .collect_vec();

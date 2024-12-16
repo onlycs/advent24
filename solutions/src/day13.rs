@@ -2,7 +2,7 @@
 use itertools::Itertools;
 use libadvent::{
     grid::{Offset, Point},
-    AsInput, CharSeperated,
+    IsInput, Seperated,
 };
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
@@ -70,10 +70,8 @@ impl ClawMachine {
     }
 }
 
-impl AsInput for ClawMachine {
-    type Input = Self;
-
-    fn from_str(s: &str) -> Self::Input {
+impl IsInput for ClawMachine {
+    fn parse(s: &str) -> Self {
         let lines = s.lines().collect_vec();
 
         let parsebtn = |s: &str| {
@@ -107,8 +105,8 @@ impl AsInput for ClawMachine {
     }
 }
 
-pub type Parser = CharSeperated<ClawMachine, '\n', 2>;
-type Input = <Parser as AsInput>::Input;
+problem_parser!(Seperated::new("\n\n", ty_parser!(ClawMachine)));
+type Input = Vec<ClawMachine>;
 
 pub fn level1(data: Input) -> usize {
     data.into_par_iter()

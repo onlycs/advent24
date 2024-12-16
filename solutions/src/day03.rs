@@ -1,4 +1,4 @@
-pub type Parser = String;
+problem_parser!(ty_parser!(String) => String);
 
 pub fn level1(input: String) -> i32 {
     let mut input = input.as_str();

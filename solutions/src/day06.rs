@@ -192,7 +192,7 @@ impl fmt::Display for Input {
     }
 }
 
-pub type Parser = Input;
+problem_parser!(ty_parser!(Input));
 
 // instead of storing two bytes per square, we can store two bits per square
 #[derive(Clone, Debug, PartialEq)]
