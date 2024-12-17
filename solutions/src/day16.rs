@@ -1,4 +1,7 @@
-use std::collections::{BinaryHeap, HashSet};
+use std::{
+    cmp::{self, Reverse},
+    collections::{BinaryHeap, HashSet},
+};
 
 use libadvent::{
     grid::{Direction, Grid, GridParser, Point},
@@ -35,9 +38,9 @@ impl Maze {
         let mut min_cost = usize::MAX;
 
         dist[self.src] = 0;
-        heap.push((0usize, (self.src, Direction::Right)));
+        heap.push(Reverse((0usize, (self.src, Direction::Right))));
 
-        while let Some((cost, (pos, from))) = heap.pop() {
+        while let Some(Reverse((cost, (pos, from)))) = heap.pop() {
             // the shortest path may not show up in the fewest iterations
             if pos == self.dest && cost < min_cost {
                 min_cost = cost;
@@ -59,7 +62,7 @@ impl Maze {
 
                 if cost < dist[next] {
                     dist[next] = cost;
-                    heap.push((cost, (next, dir)));
+                    heap.push(Reverse((cost, (next, dir))));
                 }
             }
         }
@@ -72,7 +75,7 @@ impl Maze {
         let mut dist = self.grid.map(|_, _| [min_cost, min_cost]);
 
         // (cost, (pos, dir, hist))
-        let mut heap = BinaryHeap::new();
+        let mut heap = Vec::new();
         let mut points = HashSet::new();
 
         dist[self.src][Direction::Right.axis_ord()] = 0;
@@ -131,7 +134,7 @@ impl IsInput for Maze {
     }
 }
 
-problem_parser!(ty_parser!(Maze) => Maze);
+problem_parser!(ty Maze);
 
 pub fn level1(maze: Maze) -> usize {
     maze.dijkstra()

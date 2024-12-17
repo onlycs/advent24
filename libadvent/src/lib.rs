@@ -23,6 +23,12 @@ macro_rules! problem_parser {
         }
     };
 
+    (ty $p:tt) => {
+        pub fn parser() -> impl ::libadvent::Parser<Input = $p> {
+            ty_parser!($p)
+        }
+    };
+
     ($p:expr) => {
         mod __parser {
             use super::*;
