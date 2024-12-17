@@ -79,6 +79,7 @@ impl Maze {
                 .collect::<HashMap<_, _>>()
         });
 
+        // (cost, (pos, dir, hist))
         let mut heap = BinaryHeap::new();
         let mut min_cost = usize::MAX;
         let mut points = HashSet::new();
@@ -86,9 +87,9 @@ impl Maze {
         dist[self.src].insert(Direction::Right.is_y(), 0);
         heap.push((0usize, (self.src, Direction::Right, vec![])));
 
-        while let Some((cost, (pos, from, mut bt))) = heap.pop() {
+        while let Some((cost, (pos, from, mut hist))) = heap.pop() {
             // backtracing
-            bt.push(pos);
+            hist.push(pos);
 
             // no need to explore further if the cost is already higher
             if cost > dist[pos][&from.is_y()] || cost > min_cost {
@@ -98,11 +99,11 @@ impl Maze {
             // the shortest path may not show up in the fewest iterations
             if pos == self.dest {
                 match cost.cmp(&min_cost) {
-                    cmp::Ordering::Equal => points.extend(bt),
+                    cmp::Ordering::Equal => points.extend(hist),
                     cmp::Ordering::Less => {
                         points.clear();
                         min_cost = cost;
-                        points.extend(bt);
+                        points.extend(hist);
                     }
                     _ => {}
                 }
@@ -120,19 +121,10 @@ impl Maze {
 
                 if cost <= dist[next][&dir.is_y()] {
                     dist[next].insert(dir.is_y(), cost);
-                    heap.push((cost, (next, dir, bt.clone())));
+                    heap.push((cost, (next, dir, hist.clone())));
                 }
             }
         }
-
-        println!(
-            "{}",
-            dist.map(|hm, pt| match *hm.values().min().unwrap() {
-                usize::MAX => "##### ".to_string(),
-                num if points.contains(&pt) || pt == self.src => format!("{:04}* ", num),
-                num => format!("{:05} ", num),
-            })
-        );
 
         points.len() // +1 for src, which is never added
     }
