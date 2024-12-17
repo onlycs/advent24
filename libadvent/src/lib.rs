@@ -110,6 +110,7 @@ impl<T: Parser, P: Pattern + Clone> Parser for Seperated<T, P> {
 
     fn parse(&mut self, s: &str) -> Self::Input {
         s.split(self.seperator.clone())
+            .filter(|s| !s.is_empty())
             .map(|s| self.inner.parse(s))
             .collect()
     }

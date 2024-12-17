@@ -1,7 +1,8 @@
 [package]
-name = "runner"
+name = "advent24-runner"
 version = "0.1.0"
 edition = "2021"
+authors = ["Angad Tendulkar"]
 
 [dependencies]
 colored = "2.1.0"

@@ -1,11 +1,9 @@
 use std::collections::HashMap;
 
 use itertools::Itertools;
-use libadvent::{Seperated, TyParser};
+use libadvent::Seperated;
 
-problem_parser!(Seperated::newline(Seperated::whitespace(
-    TyParser::<i32>::default()
-)) => Vec<Vec<i32>>);
+problem_parser!(Seperated::newline(Seperated::whitespace(ty_parser!(i32))) => Vec<Vec<i32>>);
 
 pub fn level1(input: Vec<Vec<i32>>) -> i32 {
     let mut side1 = input.iter().map(|v| v[0]).collect_vec();

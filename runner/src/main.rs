@@ -1,6 +1,6 @@
-use std::time::Duration;
-
 use libadvent::Parser;
+use std::io::Write;
+use std::time::Duration;
 
 use colored::Colorize;
 use paste::paste;
@@ -27,27 +27,28 @@ macro_rules! runner {
     };
 
     ($($day:ident),*) => {
-        let mut iter = 1..;
-
-        println!("Pick a day:");
-        $(
-            let i = iter.next().unwrap();
-
-            println!("{}a) {}", i, concat!(stringify!($day), "a"));
-            println!("{}b) {}", i, concat!(stringify!($day), "b"));
-        )*
+        println!("╭─ Pick a day");
+        println!("│");
+        println!("├─ Format: DD[a|b]");
+        println!("├─ Example: 01a");
+        println!("│");
+          print!("╰─ ");
 
         let mut input = String::new();
+        std::io::stdout().lock().flush().unwrap();
         std::io::stdin().read_line(&mut input).unwrap();
 
         let mut iter = (1..).map(|i| (i + 1) / 2);
+
+        println!("\x1b[1A╰─ {}", "Waiting...".yellow());
+        std::io::stdout().lock().flush().unwrap();
 
         let t2parse;
         let t2run;
 
         match input {
             $(
-                i if i.trim() == format!("{}a", iter.next().unwrap()) => {
+                i if i.trim() == format!("{:02}a", iter.next().unwrap()) => {
                     let timer = ::std::time::Instant::now();
                     let parsed = runner!(parse $day);
                     t2parse = timer.elapsed();
@@ -56,10 +57,11 @@ macro_rules! runner {
                     let output = runner!(run $day 1 parsed);
                     t2run = timer.elapsed();
 
+                    print!("\x1b[1A╰─ ");
                     println!("{} - {}", stringify!($day).blue(), "Level 1".magenta());
                     println!("\t{}:\t{}", "output".cyan(), output);
                 },
-                i if i.trim() == format!("{}b", iter.next().unwrap()) => {
+                i if i.trim() == format!("{:02}b", iter.next().unwrap()) => {
                     let timer = ::std::time::Instant::now();
                     let parsed = runner!(parse $day);
                     t2parse = timer.elapsed();
@@ -68,12 +70,13 @@ macro_rules! runner {
                     let output = runner!(run $day 2 parsed);
                     t2run = timer.elapsed();
 
+                    print!("\x1b[1A╰─ ");
                     println!("{} - {}", stringify!($day).blue(), "Level 2".magenta());
                     println!("\toutput:\t{}", output.to_string().cyan());
                 },
             )*
             _ => {
-                println!("Invalid day");
+                println!("\x1b[1A╰─ {}", "Invalid day".red());
                 ::std::process::exit(1);
             },
         }
