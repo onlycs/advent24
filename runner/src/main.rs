@@ -164,10 +164,13 @@ fn fetch() {
         ))
         .exists()
         {
+            println!("\x1b[1A╰─ {}", format!("Skipping Day {day:02}...").yellow());
             continue;
         }
 
         // attempt to fetch the token using reqwest
+        println!("\x1b[1A╰─ {}", format!("Fetching Day {day:02}...").yellow());
+
         let url = format!("https://adventofcode.com/2024/day/{}/input", day);
         let cookie = format!("session={}", token);
 
@@ -205,7 +208,7 @@ fn fetch() {
         file.flush().unwrap();
     }
 
-    println!("\x1b[1A╰─ {}", "Fetched    ".green());
+    println!("\x1b[1A╰─ {}", "Fetched               ".green());
 }
 
 fn main() {
