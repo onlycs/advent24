@@ -126,7 +126,7 @@ impl Maze {
             }
         }
 
-        points.len() // +1 for src, which is never added
+        points.len()
     }
 }
 
