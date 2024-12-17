@@ -4,7 +4,8 @@
     vec_pop_if,
     if_let_guard,
     mem_copy_fn,
-    iter_map_windows
+    iter_map_windows,
+    iter_array_chunks
 )]
 
 #[macro_use]
@@ -26,3 +27,4 @@ pub mod day13;
 pub mod day14;
 pub mod day15;
 pub mod day16;
+pub mod day17;
