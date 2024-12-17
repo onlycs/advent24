@@ -184,12 +184,20 @@ impl Mul<usize> for Offset {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Direction {
     Up,
+    Right,
     Down,
     Left,
-    Right,
+}
+
+impl Direction {
+    pub const ALL: [Self; 4] = [Self::Up, Self::Right, Self::Down, Self::Left];
+
+    pub fn is_y(&self) -> bool {
+        matches!(self, Self::Up | Self::Down)
+    }
 }
 
 impl Deref for Direction {
@@ -239,8 +247,32 @@ impl<T> Grid<T> {
         (y, x)
     }
 
+    pub fn width(&self) -> usize {
+        self.inner[0].len()
+    }
+
+    pub fn height(&self) -> usize {
+        self.inner.len()
+    }
+
     pub fn inbounds(&self, p: Point) -> bool {
         p.as_usize_lim(self.size()).is_some()
+    }
+
+    pub fn map<K>(&self, f: impl Fn(&T, Point) -> K + Clone) -> Grid<K> {
+        let inner = self
+            .inner
+            .iter()
+            .enumerate()
+            .map(|(y, row)| {
+                row.iter()
+                    .enumerate()
+                    .map(|(x, val)| (f.clone())(val, Point::new(y, x)))
+                    .collect_vec()
+            })
+            .collect_vec();
+
+        Grid { inner }
     }
 
     pub fn is(&self, p: Point, other: &T) -> bool

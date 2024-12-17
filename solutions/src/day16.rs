@@ -1,5 +1,11 @@
+use std::{
+    cmp,
+    collections::{BinaryHeap, HashMap, HashSet},
+    iter,
+};
+
 use libadvent::{
-    grid::{Grid, GridParser, Point},
+    grid::{Direction, Grid, GridParser, Point},
     IsInput, Parser,
 };
 
@@ -26,6 +32,112 @@ pub struct Maze {
     pub dest: Point,
 }
 
+impl Maze {
+    fn dijkstra(&self) -> usize {
+        let mut dist = self.grid.map(|_, _| usize::MAX);
+        let mut heap = BinaryHeap::new();
+        let mut min_cost = usize::MAX;
+
+        dist[self.src] = 0;
+        heap.push((0usize, (self.src, Direction::Right)));
+
+        while let Some((cost, (pos, from))) = heap.pop() {
+            // the shortest path may not show up in the fewest iterations
+            if pos == self.dest && cost < min_cost {
+                min_cost = cost;
+                continue;
+            }
+
+            // no need to explore further if the cost is already higher
+            if cost > dist[pos] || cost >= min_cost {
+                continue;
+            }
+
+            for dir in Direction::ALL {
+                let next = pos + *dir;
+                let cost = cost + if dir == from { 1 } else { 1001 };
+
+                if self.grid[next] == Square::Wall {
+                    continue;
+                }
+
+                if cost < dist[next] {
+                    dist[next] = cost;
+                    heap.push((cost, (next, dir)));
+                }
+            }
+        }
+
+        min_cost
+    }
+
+    fn dijkstra_level2(&self) -> usize {
+        let mut dist = self.grid.map(|_, _| {
+            [true, false]
+                .into_iter()
+                .zip(iter::from_fn(|| Some(usize::MAX)))
+                .collect::<HashMap<_, _>>()
+        });
+
+        let mut heap = BinaryHeap::new();
+        let mut min_cost = usize::MAX;
+        let mut points = HashSet::new();
+
+        dist[self.src].insert(Direction::Right.is_y(), 0);
+        heap.push((0usize, (self.src, Direction::Right, vec![])));
+
+        while let Some((cost, (pos, from, mut bt))) = heap.pop() {
+            // backtracing
+            bt.push(pos);
+
+            // no need to explore further if the cost is already higher
+            if cost > dist[pos][&from.is_y()] || cost > min_cost {
+                continue;
+            }
+
+            // the shortest path may not show up in the fewest iterations
+            if pos == self.dest {
+                match cost.cmp(&min_cost) {
+                    cmp::Ordering::Equal => points.extend(bt),
+                    cmp::Ordering::Less => {
+                        points.clear();
+                        min_cost = cost;
+                        points.extend(bt);
+                    }
+                    _ => {}
+                }
+
+                continue;
+            }
+
+            for dir in Direction::ALL {
+                let next = if dir == from { pos + *dir } else { pos };
+                let cost = cost + if dir == from { 1 } else { 1000 };
+
+                if self.grid[next] == Square::Wall {
+                    continue;
+                }
+
+                if cost <= dist[next][&dir.is_y()] {
+                    dist[next].insert(dir.is_y(), cost);
+                    heap.push((cost, (next, dir, bt.clone())));
+                }
+            }
+        }
+
+        println!(
+            "{}",
+            dist.map(|hm, pt| match *hm.values().min().unwrap() {
+                usize::MAX => "##### ".to_string(),
+                num if points.contains(&pt) || pt == self.src => format!("{:04}* ", num),
+                num => format!("{:05} ", num),
+            })
+        );
+
+        points.len() // +1 for src, which is never added
+    }
+}
+
 impl IsInput for Maze {
     fn parse(s: &str) -> Self {
         let mut src = Point::ORIGIN;
@@ -42,14 +154,12 @@ impl IsInput for Maze {
     }
 }
 
-// pub struct Parser;
+problem_parser!(ty_parser!(Maze) => Maze);
 
-// type Input = <Parser as Parser>::Input;
+pub fn level1(maze: Maze) -> usize {
+    maze.dijkstra()
+}
 
-// pub fn level1(_: Input) -> i32 {
-//     0
-// }
-
-// pub fn level2(_: Input) -> i32 {
-//     0
-// }
+pub fn level2(maze: Maze) -> usize {
+    maze.dijkstra_level2()
+}
