@@ -67,7 +67,7 @@ impl Maze {
         min_cost
     }
 
-    fn dijkstra_level2(&self) -> usize {
+    fn dijkstra_uniq_squares(&self) -> usize {
         let min_cost = self.dijkstra();
         let mut dist = self.grid.map(|_, _| [min_cost, min_cost]);
 
@@ -138,5 +138,5 @@ pub fn level1(maze: Maze) -> usize {
 }
 
 pub fn level2(maze: Maze) -> usize {
-    maze.dijkstra_level2()
+    maze.dijkstra_uniq_squares()
 }
