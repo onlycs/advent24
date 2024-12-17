@@ -8,4 +8,5 @@ authors = ["Angad Tendulkar"]
 colored = "2.1.0"
 libadvent = { workspace = true }
 paste = "1.0.15"
+reqwest = { version = "0.12.9", features = ["blocking"] }
 solutions = { path = "../solutions" }
