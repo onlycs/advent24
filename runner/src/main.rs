@@ -22,7 +22,7 @@ macro_rules! runner {
                     stringify!($day),
                     ".txt"
                 )
-            )
+            ).trim()
         )
     };
 

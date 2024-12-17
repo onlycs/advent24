@@ -55,9 +55,9 @@ impl Robot {
 
 impl IsInput for Robot {
     fn parse(s: &str) -> Self {
-        let lines = s.split(" ").collect_vec();
-        let position = Point::parse_xy(&lines[0][2..], ",");
-        let velocity = Offset::parse_xy(&lines[1][2..], ",");
+        let parts = s.split(" ").collect_vec();
+        let position = Point::parse_xy(&parts[0][2..], ",");
+        let velocity = Offset::parse_xy(&parts[1][2..], ",");
 
         Self { position, velocity }
     }

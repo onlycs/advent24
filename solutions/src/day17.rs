@@ -1,8 +1,7 @@
-use std::{collections::HashSet, mem};
+use std::mem;
 
 use itertools::Itertools;
 use libadvent::{IsInput, Parser};
-use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(u8)]
@@ -200,7 +199,6 @@ impl IsInput for VirtualMachine {
 problem_parser!(ty VirtualMachine);
 
 pub fn level1(mut vm: VirtualMachine) -> String {
-    println!("{:#?}", vm);
     vm.run();
     vm.out.into_iter().join(",")
 }
