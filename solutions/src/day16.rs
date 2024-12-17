@@ -1,8 +1,4 @@
-use std::{
-    cmp,
-    collections::{BinaryHeap, HashMap, HashSet},
-    iter,
-};
+use std::collections::{BinaryHeap, HashSet};
 
 use libadvent::{
     grid::{Direction, Grid, GridParser, Point},
@@ -72,19 +68,14 @@ impl Maze {
     }
 
     fn dijkstra_level2(&self) -> usize {
-        let mut dist = self.grid.map(|_, _| {
-            [true, false]
-                .into_iter()
-                .zip(iter::from_fn(|| Some(usize::MAX)))
-                .collect::<HashMap<_, _>>()
-        });
+        let min_cost = self.dijkstra();
+        let mut dist = self.grid.map(|_, _| [min_cost, min_cost]);
 
         // (cost, (pos, dir, hist))
         let mut heap = BinaryHeap::new();
-        let mut min_cost = usize::MAX;
         let mut points = HashSet::new();
 
-        dist[self.src].insert(Direction::Right.is_y(), 0);
+        dist[self.src][Direction::Right.axis_ord()] = 0;
         heap.push((0usize, (self.src, Direction::Right, vec![])));
 
         while let Some((cost, (pos, from, mut hist))) = heap.pop() {
@@ -92,20 +83,14 @@ impl Maze {
             hist.push(pos);
 
             // no need to explore further if the cost is already higher
-            if cost > dist[pos][&from.is_y()] || cost > min_cost {
+            if cost > dist[pos][from.axis_ord()] || cost > min_cost {
                 continue;
             }
 
             // the shortest path may not show up in the fewest iterations
             if pos == self.dest {
-                match cost.cmp(&min_cost) {
-                    cmp::Ordering::Equal => points.extend(hist),
-                    cmp::Ordering::Less => {
-                        points.clear();
-                        min_cost = cost;
-                        points.extend(hist);
-                    }
-                    _ => {}
+                if cost == min_cost {
+                    points.extend(hist);
                 }
 
                 continue;
@@ -119,8 +104,8 @@ impl Maze {
                     continue;
                 }
 
-                if cost <= dist[next][&dir.is_y()] {
-                    dist[next].insert(dir.is_y(), cost);
+                if cost <= dist[next][dir.axis_ord()] {
+                    dist[next][dir.axis_ord()] = cost;
                     heap.push((cost, (next, dir, hist.clone())));
                 }
             }

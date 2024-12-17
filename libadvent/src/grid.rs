@@ -195,8 +195,11 @@ pub enum Direction {
 impl Direction {
     pub const ALL: [Self; 4] = [Self::Up, Self::Right, Self::Down, Self::Left];
 
-    pub fn is_y(&self) -> bool {
-        matches!(self, Self::Up | Self::Down)
+    pub fn axis_ord(&self) -> usize {
+        match self {
+            Self::Up | Self::Down => 0,
+            Self::Left | Self::Right => 1,
+        }
     }
 }
 
