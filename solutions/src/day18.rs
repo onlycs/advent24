@@ -1,4 +1,4 @@
-use std::{cmp, collections::BinaryHeap, usize};
+use std::{cmp, collections::BinaryHeap};
 
 use libadvent::{
     grid::{Direction, Grid, Point, PointParser},
