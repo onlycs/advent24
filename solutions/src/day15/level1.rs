@@ -106,7 +106,7 @@ impl fmt::Display for Input {
     }
 }
 
-pub fn level1(input: <InputParser as Parser>::Input) -> usize {
+pub fn level1(input: <InputParser as Parser>::Output) -> usize {
     let (squares, robot, moves) = input;
     let mut input = Input {
         squares,

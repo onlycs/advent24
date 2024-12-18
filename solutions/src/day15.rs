@@ -14,9 +14,9 @@ use level1_m::Square as Square1;
 
 pub struct InputParser;
 impl Parser for InputParser {
-    type Input = (Grid<Square1>, Point, Vec<Direction>);
+    type Output = (Grid<Square1>, Point, Vec<Direction>);
 
-    fn parse(&mut self, s: &str) -> Self::Input {
+    fn parse(&mut self, s: &str) -> Self::Output {
         let parts = s.split("\n\n").collect_vec();
 
         let squares = GridParser::new(ty_parser!(Square1)).parse(parts[0]);

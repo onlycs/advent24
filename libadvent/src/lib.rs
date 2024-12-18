@@ -12,7 +12,7 @@ pub mod grid;
 #[macro_export]
 macro_rules! problem_parser {
     ($p:expr => $ty:ty) => {
-        pub fn parser() -> impl ::libadvent::Parser<Input = $ty> {
+        pub fn parser() -> impl ::libadvent::Parser<Output = $ty> {
             $p
         }
     };
@@ -24,7 +24,7 @@ macro_rules! problem_parser {
     };
 
     (ty $p:tt) => {
-        pub fn parser() -> impl ::libadvent::Parser<Input = $p> {
+        pub fn parser() -> impl ::libadvent::Parser<Output = $p> {
             ty_parser!($p)
         }
     };
@@ -47,8 +47,8 @@ macro_rules! ty_parser {
 }
 
 pub trait Parser {
-    type Input;
-    fn parse(&mut self, s: &str) -> Self::Input;
+    type Output;
+    fn parse(&mut self, s: &str) -> Self::Output;
 }
 
 pub trait IsInput {
@@ -58,9 +58,9 @@ pub trait IsInput {
 pub struct TyParser<T: IsInput>(marker::PhantomData<T>);
 
 impl<T: IsInput> Parser for TyParser<T> {
-    type Input = T;
+    type Output = T;
 
-    fn parse(&mut self, s: &str) -> Self::Input {
+    fn parse(&mut self, s: &str) -> Self::Output {
         T::parse(s)
     }
 }
@@ -106,9 +106,9 @@ impl<T: Parser> Seperated<T, fn(char) -> bool> {
 }
 
 impl<T: Parser, P: Pattern + Clone> Parser for Seperated<T, P> {
-    type Input = Vec<T::Input>;
+    type Output = Vec<T::Output>;
 
-    fn parse(&mut self, s: &str) -> Self::Input {
+    fn parse(&mut self, s: &str) -> Self::Output {
         s.split(self.seperator.clone())
             .filter(|s| !s.is_empty())
             .map(|s| self.inner.parse(s))
@@ -132,13 +132,34 @@ impl<T: Parser> Take<T> {
 }
 
 impl<T: Parser> Parser for Take<T> {
-    type Input = Vec<T::Input>;
+    type Output = Vec<T::Output>;
 
-    fn parse(&mut self, s: &str) -> Self::Input {
+    fn parse(&mut self, s: &str) -> Self::Output {
         s.chars()
             .chunks(self.n)
             .into_iter()
             .map(|c| self.inner.parse(&c.collect::<String>()))
             .collect()
+    }
+}
+
+pub struct Reverse<P: Parser<Output = Vec<T>>, T> {
+    inner: P,
+}
+
+impl<P: Parser<Output = Vec<T>>, T> Reverse<P, T> {
+    pub const fn new(inner: P) -> Self {
+        Self { inner }
+    }
+}
+
+impl<P: Parser<Output = Vec<T>>, T> Parser for Reverse<P, T> {
+    type Output = Vec<T>;
+
+    fn parse(&mut self, s: &str) -> Self::Output {
+        let mut inner = self.inner.parse(s);
+        inner.reverse();
+
+        inner
     }
 }

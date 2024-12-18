@@ -168,6 +168,26 @@ impl PartialOrd for Point {
     }
 }
 
+pub struct PointParser<T: Parser>(T);
+
+impl<T: Parser> PointParser<T> {
+    pub const fn new(inner: T) -> Self {
+        Self(inner)
+    }
+}
+
+impl<T: Parser<Output = Vec<usize>>> Parser for PointParser<T> {
+    type Output = Point;
+
+    fn parse(&mut self, s: &str) -> Self::Output {
+        let &[a, b] = self.0.parse(s).as_slice() else {
+            panic!("More than two items in point parser's inner");
+        };
+
+        Point::new(a, b)
+    }
+}
+
 impl Mul<isize> for Offset {
     type Output = Self;
 
@@ -269,6 +289,10 @@ impl<T> Grid<T> {
 
     pub fn inbounds(&self, p: Point) -> bool {
         p.as_usize_lim(self.size()).is_some()
+    }
+
+    pub fn get(&self, p: Point) -> Option<&T> {
+        self.inbounds(p).then(|| &self[p])
     }
 
     pub fn map<K>(&self, f: impl Fn(&T, Point) -> K + Clone) -> Grid<K> {
@@ -398,9 +422,9 @@ impl<T: Parser, F: FnMut(char, Point)> GridParser<T, F> {
 }
 
 impl<T: Parser, F: FnMut(char, Point)> Parser for GridParser<T, F> {
-    type Input = Grid<T::Input>;
+    type Output = Grid<T::Output>;
 
-    fn parse(&mut self, s: &str) -> Self::Input {
+    fn parse(&mut self, s: &str) -> Self::Output {
         let inner = s
             .lines()
             .enumerate()
