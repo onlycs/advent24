@@ -61,7 +61,7 @@ impl<T: IsInput> Parser for TyParser<T> {
     type Output = T;
 
     fn parse(&mut self, s: &str) -> Self::Output {
-        T::parse(s)
+        T::parse(s.trim())
     }
 }
 
