@@ -1,4 +1,4 @@
-use std::collections::{BinaryHeap, HashMap};
+use std::collections::{BinaryHeap, HashMap, VecDeque};
 
 use itertools::Itertools;
 use libadvent::{
@@ -53,15 +53,12 @@ pub struct Input {
 impl Input {
     pub fn dijkstra(&self, hack_steps: usize) -> usize {
         let mut dist = self.grid.map(|_, _| usize::MAX);
-        let mut heap = BinaryHeap::new();
-
-        dist[self.src] = 0;
-        heap.push(State {
+        let mut heap = VecDeque::from([State {
             point: self.src,
             cost: 0,
-        });
+        }]);
 
-        while let Some(State { point, cost, .. }) = heap.pop() {
+        while let Some(State { point, cost, .. }) = heap.pop_front() {
             if point == self.dest {
                 continue;
             }
@@ -80,7 +77,7 @@ impl Input {
 
                 if cost < dist[next] {
                     dist[next] = cost;
-                    heap.push(State { point: next, cost });
+                    heap.push_back(State { point: next, cost });
                 }
             }
         }
