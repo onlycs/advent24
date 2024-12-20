@@ -85,7 +85,7 @@ impl Input {
             }
         }
 
-        // collect dist into hmap
+        // collect dist into hmap because it's faster for some reason? idk.
         let dist = dist
             .into_iter()
             .filter(|(_, n)| *n != usize::MAX)
@@ -94,13 +94,19 @@ impl Input {
         let mut better = 0;
 
         for ((pt1, cost1), (pt2, cost2)) in dist.iter().tuple_combinations() {
+            // equal to the steps we take to get there because we can only move orthogonally
             let dist = pt1.manhattan(*pt2);
+
+            // re-evaluate cost. if we can cut a direct path between pt1 and pt2, we can save all of the steps
+            // to get there normally (but add the distance, because hacking still costs the same amount)
             let diff = cost1.abs_diff(*cost2) - dist;
 
+            // if we cannot join the paths, we can't save any steps
             if dist > hack_steps {
                 continue;
             }
 
+            // we need to save at least 100 steps for it to count towards the answer
             if diff >= 100 {
                 better += 1;
             }
