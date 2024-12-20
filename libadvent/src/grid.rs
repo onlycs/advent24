@@ -77,6 +77,16 @@ impl Point {
         (y * y + x * x).sqrt()
     }
 
+    pub fn manhattan(&self, other: Point) -> usize {
+        let Point(x1, y1) = *self;
+        let Point(x2, y2) = other;
+
+        let dx = x1.abs_diff(x2);
+        let dy = y1.abs_diff(y2);
+
+        dx + dy
+    }
+
     pub fn x(&self) -> isize {
         self.1
     }
@@ -334,6 +344,16 @@ impl<T> Grid<T> {
             // SAFETY: a and b are in bounds and different
             ptr::swap(&mut self[a], &mut self[b]);
         }
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = (Point, &T)> + Clone {
+        let width = self.inner[0].len();
+
+        self.inner
+            .iter()
+            .flatten()
+            .enumerate()
+            .map(move |(a, b)| (Point::from_1d(a, width), b))
     }
 
     pub fn find(&self, other: &T) -> Point
