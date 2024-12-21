@@ -58,6 +58,8 @@ impl Input {
             cost: 0,
         }]);
 
+        dist[self.src] = 0;
+
         while let Some(State { point, cost, .. }) = heap.pop_front() {
             if point == self.dest {
                 continue;
@@ -82,7 +84,7 @@ impl Input {
             }
         }
 
-        // collect dist into hmap because it's faster for some reason? idk.
+        // collect dist into hmap. faster? idk why
         let dist = dist
             .into_iter()
             .filter(|(_, n)| *n != usize::MAX)
