@@ -78,13 +78,19 @@ impl Point {
     }
 
     pub fn manhattan(&self, other: Point) -> usize {
+        let (dy, dx) = self.ortho_diff(other);
+
+        dy.unsigned_abs() + dx.unsigned_abs()
+    }
+
+    pub fn ortho_diff(&self, other: Point) -> (isize, isize) {
         let Point(x1, y1) = *self;
         let Point(x2, y2) = other;
 
-        let dx = x1.abs_diff(x2);
-        let dy = y1.abs_diff(y2);
+        let dx = x1 - x2;
+        let dy = y1 - y2;
 
-        dx + dy
+        (dy, dx)
     }
 
     pub fn x(&self) -> isize {
@@ -280,6 +286,22 @@ impl<T> Grid<T> {
         let inner = vec![vec![init; width]; height];
 
         Self { inner }
+    }
+
+    pub fn new_from(init: Vec<T>, width: usize) -> Self
+    where
+        T: Clone,
+    {
+        assert_eq!(
+            init.len() % width,
+            0,
+            "{} is not divisible by width {width}, would not make a perfect grid",
+            init.len()
+        );
+
+        Self {
+            inner: init.chunks(width).map(<[T]>::to_vec).collect_vec(),
+        }
     }
 
     pub fn size(&self) -> (usize, usize) {

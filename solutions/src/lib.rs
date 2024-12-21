@@ -5,11 +5,14 @@
     if_let_guard,
     mem_copy_fn,
     iter_map_windows,
-    iter_array_chunks
+    iter_array_chunks,
+    const_char_classify,
+    trait_alias
 )]
 
 #[macro_use]
 extern crate libadvent;
+extern crate lazy_static;
 
 pub mod day01;
 pub mod day02;
@@ -31,3 +34,4 @@ pub mod day17;
 pub mod day18;
 pub mod day19;
 pub mod day20;
+pub mod day21;

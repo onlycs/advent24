@@ -1,4 +1,4 @@
-use std::collections::{BinaryHeap, HashMap, VecDeque};
+use std::collections::{HashMap, VecDeque};
 
 use itertools::Itertools;
 use libadvent::{
