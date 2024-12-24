@@ -163,3 +163,21 @@ impl<P: Parser<Output = Vec<T>>, T> Parser for Reverse<P, T> {
         inner
     }
 }
+
+pub struct FuncParser<T, F: FnMut(&str) -> T> {
+    func: F,
+}
+
+impl<T, F: FnMut(&str) -> T> FuncParser<T, F> {
+    pub const fn new(func: F) -> Self {
+        Self { func }
+    }
+}
+
+impl<T, F: FnMut(&str) -> T> Parser for FuncParser<T, F> {
+    type Output = T;
+
+    fn parse(&mut self, s: &str) -> Self::Output {
+        (self.func)(s)
+    }
+}
