@@ -57,7 +57,7 @@ pub trait IsInput {
 
 pub struct TyParser<T: IsInput>(marker::PhantomData<T>);
 
-impl<T: IsInput> Parser for TyParser<T> {
+impl<'a, T: IsInput> Parser for TyParser<T> {
     type Output = T;
 
     fn parse(&mut self, s: &str) -> Self::Output {
