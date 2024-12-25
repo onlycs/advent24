@@ -16,9 +16,7 @@ fn solve(data: Input, steps: usize) -> usize {
         acc
     });
 
-    for i in 0..steps {
-        println!("step {i}");
-
+    for _ in 0..steps {
         for (num, occurrences) in counts.drain().collect_vec() {
             let mut add = |num: u64| {
                 counts

@@ -239,16 +239,10 @@ problem_parser!(ty_parser!(Input));
 
 pub fn level1(mut input: Input) -> usize {
     input.antinodify_all();
-
-    println!("{input}");
-
     input.count_antinodes()
 }
 
 pub fn level2(mut input: Input) -> usize {
     input.antinodify_all2();
-
-    println!("{input}");
-
     input.count_antinodes()
 }
